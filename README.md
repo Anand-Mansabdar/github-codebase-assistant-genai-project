@@ -10,3 +10,5 @@ Pydantic-Settings - Professional projects often use Pydantic Settings because it
 3 - Cleaner syntax
 4 - Automatic .env loading
 5 - Easy scaling
+
+# SecretStr prevents accidental printing of your API keys in logs or tracebacks.
