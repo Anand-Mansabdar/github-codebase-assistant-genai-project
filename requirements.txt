@@ -1,0 +1,33 @@
+# Core Libraries
+langchain
+langgraph
+langchain-community
+langchain-core
+
+# LLM
+langchain-groq
+
+# embeddings
+sentence-transformers
+langchain-huggingface
+
+# vector database
+chromadb
+
+# parser
+tree-sitter
+tree-sitter-languages
+
+# git
+GitPython
+
+# utilities
+python-dotenv
+rich
+tqdm
+pydantic
+pydantic-settings
+
+# extras
+networkx
+graphviz
