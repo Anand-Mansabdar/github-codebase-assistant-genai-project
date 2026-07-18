@@ -5,7 +5,7 @@
 # No → Ignore
 
 from pathlib import Path
-from metadata import LANGUAGE_MAP
+from repository.metadata import LANGUAGE_MAP
 
 SUPPORTED_EXTENSIONS = set(LANGUAGE_MAP.keys())
 
@@ -72,7 +72,7 @@ def should_index(path: Path) -> bool:
     1. Ignore hidden/system directories.
     2. Ignore unsupported file extensions.
   """
-  if any(part in IGNORED_DIRECTORIES for part in Path.parts):
+  if any(part in IGNORED_DIRECTORIES for part in path.parts):
     return False
   
   if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
