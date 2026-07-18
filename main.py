@@ -1,5 +1,5 @@
 from config.settings import settings
-from repository.clone_repo import get_repository_name, validate_github_url
+from repository.clone_repo import get_repository_name, validate_github_url, clone_repository
 
 print("=" * 50)
 print(settings.app_name)
@@ -8,8 +8,6 @@ print(f"Debug   : {settings.debug}")
 print(f"Repo    : {settings.repository_path}")
 print("=" * 50)
 
-print(get_repository_name("https://github.com/microsoft/vscode"))
+repo = clone_repository("https://github.com/Anand-Mansabdar/github-codebase-assistant-genai-project.git")
 
-print(validate_github_url("hello"))
-print(validate_github_url("https://google.com"))
-print(validate_github_url("https://github.com/langchain-ai/langchain"))
+print(repo)
