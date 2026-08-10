@@ -31,3 +31,6 @@ pydantic-settings
 # extras
 networkx
 graphviz
+
+# text-splitters
+langchain-text-splitters
