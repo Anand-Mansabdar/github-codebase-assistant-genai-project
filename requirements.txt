@@ -17,6 +17,9 @@ chromadb
 # parser
 tree-sitter
 tree-sitter-languages
+tree-sitter-python 
+tree-sitter-javascript 
+tree-sitter-typescript
 
 # git
 GitPython
