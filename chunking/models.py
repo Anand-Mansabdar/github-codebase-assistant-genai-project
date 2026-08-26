@@ -10,3 +10,5 @@ class ChunkMetaData:
   language: str
   start_line: int
   end_line: int
+  class_name: str | None = None
+  function_name: str | None = None

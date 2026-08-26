@@ -2,76 +2,29 @@ from repository.clone_repo import clone_repository
 from repository.file_loader import load_repository_files
 from chunking.splitter import split_file
 from parsing.parser import analyze_file
-
+from chunking.enricher import enrich_chunk
 
 repo_path = clone_repository(
-    "https://github.com/Anand-Mansabdar/github-codebase-assistant-genai-project.git"
+    "https://github.com/Anand-Mansabdar/AskAnand.AI---AI-Portfolio-Assistant-for-my-resumes.git"
 )
 
 files = load_repository_files(repo_path)
-python_files = [
-    file
-    for file in files
-    if file.language == "Python"
-]
-
-structure = analyze_file(python_files[0])
-
-print(structure)
-
-
-
-from parsing.parser import parse_source, walk_tree, extract_functions, extract_classes
-
-
-source = """
-import os
-import json
-
-
-class UserService:
-
-    def create_user(self, username):
-        return username
-
-    def delete_user(self, username):
-        return True
-
-
-def helper_function():
-    print("Hello")
-"""
-
-
-tree = parse_source(
-    source,
-    "Python",
+python_files = next(
+    file for file in files if file.language == "Python"
 )
 
-root = tree.root_node
+structure = analyze_file(python_files)
 
-print(root.type)
-print(root.start_point)
-print(root.end_point)
+chunks = split_file(python_files)
 
-print(tree.root_node)
+for chunk in chunks:
+    enrich_chunk(chunk=chunk, structure=structure)
+    
+    print("=" * 80)
 
-for child in tree.root_node.children:
-    print(
-        child.type,
-        child.start_point,
-        child.end_point,
-    )
-    
+    print("File:", chunk.source_file)
+    print("Lines:", chunk.start_line, "-", chunk.end_line)
+    print("Class:", chunk.class_name)
+    print("Function:", chunk.function_name)
 
-for node in walk_tree(tree.root_node):
-    print(node.type)
-    
-    
-functions = extract_functions(tree)
-for function in functions:
-    print(function)
-    
-classes = extract_classes(tree)
-for c in classes:
-    print(c)
+    print(chunk.content)
