@@ -1,9 +1,7 @@
 from repository.clone_repo import clone_repository
 from repository.file_loader import load_repository_files
-from chunking.splitter import split_file
-from parsing.parser import analyze_file
-from chunking.enricher import enrich_chunk
 from indexing.indexer import build_repository_index
+from embeddings.document_builder import build_embedding_documents
 
 repo_path = clone_repository(
     "https://github.com/Anand-Mansabdar/AskAnand.AI---AI-Portfolio-Assistant-for-my-resumes"
@@ -16,15 +14,14 @@ repository_index = build_repository_index(
     files=files
 )
 
-print(f"Total chunks: {repository_index.total_chunks}")
+documents = build_embedding_documents(repository_index.chunks)
 
-for chunk in repository_index.chunks[:10]:
-    print("=" * 80)
+print(
+    f"Embedding documents: {len(documents)}"
+)
 
-    print("File:", chunk.source_file)
-    print("Language:", chunk.language)
-    print("Lines:", chunk.start_line, "-", chunk.end_line)
-    print("Class:", chunk.class_name)
-    print("Function:", chunk.function_name)
+document = documents[1]
 
-    print(chunk.content[:300])
+print(document.text)
+print()
+print(document.metadata)
