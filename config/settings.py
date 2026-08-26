@@ -24,6 +24,8 @@ class Settings(BaseSettings):
   # Path configuration
   repository_path: str = "data/repositories"
   vector_db_path: str = "data/chroma"
+  
+  EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
 
 
   # To tell Pydantic where .env is
