@@ -4,6 +4,8 @@ from indexing.indexer import build_repository_index
 from embeddings.document_builder import build_embedding_documents
 from embeddings.model import EmbeddingModel
 from vector_store.store import ChromaVectorStore
+from retrieval.retriever import CodeRetriever
+from retrieval.formatter import format_context
 
 repo_path = clone_repository(
     "https://github.com/Anand-Mansabdar/ai-coding-agent-assignment.git"
@@ -19,49 +21,37 @@ repository_index = build_repository_index(
 documents = build_embedding_documents(repository_index.chunks)
 
 embedding_model = EmbeddingModel()
+vector_store = ChromaVectorStore()
 
-texts = [
-    document.text
-    for document in documents
-]
-
-vectors = embedding_model.embed_documents(
-    texts
+retriever = CodeRetriever(
+    embedding_model=embedding_model,
+    vector_store=vector_store
 )
 
-store = ChromaVectorStore()
-
-store.reset()
-
-store.add_documents(
-    documents=documents,
-    embeddings=vectors
-)
-
-print(f"Chroma Documents: {store.count()}")
-
-query = "Query about your project"
-
-query_embedding = embedding_model.embed_text(
-    query
-)
-
-results = store.search(
-    query_embedding=query_embedding,
+results = retriever.retrieve(
+    query="Where is JWT authentication implemented?",
     n_results=5,
 )
 
-for document, metadata, distance in zip(
-    results["documents"][0],
-    results["metadatas"][0],
-    results["distances"][0],
-):
+for result in results:
 
     print("=" * 80)
 
-    print("Distance:", distance)
-    print("File:", metadata["source_file"])
-    print("Class:", metadata["class_name"])
-    print("Function:", metadata["function_name"])
+    print("File:", result.source_file)
+    print(
+        "Lines:",
+        result.start_line,
+        "-",
+        result.end_line,
+    )
 
-    print(document[:500])
+    print("Language:", result.language)
+    print("Class:", result.class_name)
+    print("Function:", result.function_name)
+    print("Distance:", result.distance)
+
+    print()
+    print(result.content[:500])
+
+context = format_context(results)
+print(context)
