@@ -8,7 +8,7 @@ class CodeRetriever:
     self.vector_store =vector_store
       
   
-  def retrieve(self, query: str, n_results: int = 5) -> list[SearchResult]:
+  def retrieve(self, query: str, n_results: int = 5, max_distance: float | None = None) -> list[SearchResult]:
     query_embedding = self.embedding_model.embed_text(query)
     
     raw_results = self.vector_store.search(
@@ -16,7 +16,19 @@ class CodeRetriever:
       n_results=n_results
     )
     
-    return self._parse_results(raw_results)
+    results = self._parse_results(raw_results)
+    
+    if max_distance is not None:
+      results = [
+        result 
+        for result in results
+        if result.distance <= max_distance
+      ]
+    
+    if not results:
+      return []
+    
+    return results
   
   
   def _parse_results(self, results: dict) -> list[SearchResult]:

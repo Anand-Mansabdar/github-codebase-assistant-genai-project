@@ -31,6 +31,7 @@ retriever = CodeRetriever(
 results = retriever.retrieve(
     query="Where is JWT authentication implemented?",
     n_results=5,
+    max_distance=0.8,
 )
 
 for result in results:
