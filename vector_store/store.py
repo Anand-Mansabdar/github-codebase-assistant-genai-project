@@ -58,3 +58,12 @@ class ChromaVectorStore:
       query_embeddings=[query_embedding],
       n_results=n_results
     )
+    
+    
+  def get_all(self) -> dict[str, Any]:
+    return self.collection.get(
+      include=[
+        "documents",
+        "metadatas"
+      ]
+    )
