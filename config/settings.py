@@ -26,6 +26,9 @@ class Settings(BaseSettings):
   vector_db_path: str = "data/chroma"
   
   EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
+  
+  CHROMA_PATH: str = "./data/chroma"
+  COLLECTION_NAME: str = "codebase"
 
 
   # To tell Pydantic where .env is
