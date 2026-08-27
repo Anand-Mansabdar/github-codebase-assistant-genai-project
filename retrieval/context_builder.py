@@ -25,49 +25,44 @@ class MultiFileContextBuilder:
       return ""
 
     grouped = self._group_by_file(results)
-    sections = []
+    sections: list[str] = []
+    current_length = 0
 
     for source_file, file_results in grouped.items():
-      file_results = sorted(
-        file_results,
-        key=lambda result: result.start_line,
+      file_section = self._format_file(
+        source_file,
+        file_results
       )
 
-      sections.append(
-        self._format_file(
-          source_file,
-          file_results,
-        )
-      )
+      if current_length + len(file_section) > self.max_context_chars: break
 
-      context = "\n\n".join(sections)
-
-      if len(context) >= self.max_context_chars:
-        break
-
-      return "\n\n".join(sections)
+      sections.append(file_section)
+      current_length += len(file_section)
+    
+    return "\n\n".join(sections)
 
   def _group_by_file(
     self,
     results: list[SearchResult],
   ) -> dict[str, list[SearchResult]]:
 
-    grouped = defaultdict(list)
+    grouped: dict[str, list[SearchResult]] = (defaultdict(list))
 
     for result in results:
       grouped[result.source_file].append(result)
-      ranked_files = sorted(
-        grouped.items(),
-        key=lambda item: max(
-          result.score
-          for result in item[1]
-        ),
-        reverse=True,
-      )
+      
+    ranked_files = sorted(
+      grouped.items(),
+      key=lambda item: max(
+        result.score
+        for result in item[1]
+      ),
+      reverse=True,
+    )
 
-      return dict(
-        ranked_files[:self.max_files]
-      )
+    return dict(
+      ranked_files[:self.max_files]
+    )
 
   def _format_file(
     self,
@@ -75,14 +70,19 @@ class MultiFileContextBuilder:
     results: list[SearchResult],
   ) -> str:
 
-    chunks = results[:self.max_chunks_per_file]
-
+    results = sorted(
+      results,
+      key=lambda result: result.start_line,
+    )
+    
+    results = results[:self.max_chunks_per_file]
+    
     parts = [
       f"FILE: {source_file}"
     ]
-
-    for result in chunks:
-      metadata = []
+    
+    for result in results:
+      metadata: list[str] = []
 
       if result.language:
         metadata.append(f"Language: {result.language}")
@@ -99,11 +99,15 @@ class MultiFileContextBuilder:
       )
 
       parts.append("\n".join(metadata))
+      
+      language = (
+        result.language.lower() if result.language else ""
+      )
 
       parts.append(
-        f"```{result.language.lower()}\n"
+        f"```{language}\n"
         f"{result.content}\n"
         f"```"
       )
 
-      return "\n\n".join(parts)
+    return "\n\n".join(parts)
