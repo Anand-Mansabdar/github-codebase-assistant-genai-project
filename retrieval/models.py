@@ -10,6 +10,7 @@ class SearchResult:
   class_name: str | None
   function_name: str | None
   distance: float
+  score: float = 0.0
   
   
   @property

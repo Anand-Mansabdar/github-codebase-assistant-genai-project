@@ -148,10 +148,13 @@ class HybridRetriever:
       reverse=True,
     )
 
-    return [
-        result_map[key]
-        for key, _ in ranked
-    ]
+    ranked_results = []
+    for key, _ in ranked:
+      result = result_map[key]
+      result.score = scores[key]
+      ranked_results.append(result)
+    
+    return ranked_results
     
   def _get_embeddings(
     self,
@@ -242,7 +245,7 @@ class HybridRetriever:
           best_score = mmr_score
           best_index = index
 
-        selected_indices.add(best_index)
-        selected.append(candidate_results[best_index])
+      selected_indices.add(best_index)
+      selected.append(candidate_results[best_index])
 
     return selected

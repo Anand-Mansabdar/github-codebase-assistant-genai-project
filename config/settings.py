@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     env_file=".env",
     env_file_encoding="utf-8" 
   )
+  
+  MAX_CONTENT_FILES: int = 8
+  MAX_CHUNKS_PER_FILE: int = 4
+  MAX_CONTENT_CHARS: int = 30000
 
 
 # creating a global object for settings
