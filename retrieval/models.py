@@ -11,3 +11,8 @@ class SearchResult:
   function_name: str | None
   distance: float
   
+  
+  @property
+  def relevance_score(self) -> float:
+    return 1 / (1 + self.distance)
+  

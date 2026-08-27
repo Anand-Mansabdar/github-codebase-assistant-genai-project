@@ -18,7 +18,8 @@ class CodebaseRAG:
   ) -> str:
     results = self.retriever.retrieve(
       query=question,
-      n_results=n_results
+      n_results=n_results,
+      max_results=n_results
     )
     
     if not results:

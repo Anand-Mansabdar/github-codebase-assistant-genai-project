@@ -8,7 +8,13 @@ class CodeRetriever:
     self.vector_store =vector_store
       
   
-  def retrieve(self, query: str, n_results: int = 5, max_distance: float | None = None) -> list[SearchResult]:
+  def retrieve(
+    self, 
+    query: str, 
+    n_results: int = 5, 
+    max_distance: float | None = None,
+    max_results: int | None = None,
+  ) -> list[SearchResult]:
     query_embedding = self.embedding_model.embed_text(query)
     
     raw_results = self.vector_store.search(
@@ -18,12 +24,17 @@ class CodeRetriever:
     
     results = self._parse_results(raw_results)
     
+    results = self._deduplicate_results(results=results)
+    
     if max_distance is not None:
       results = [
         result 
         for result in results
         if result.distance <= max_distance
       ]
+    
+    if max_results is not None:
+      results = results[:max_results]
     
     if not results:
       return []
@@ -56,3 +67,23 @@ class CodeRetriever:
 
     return search_results
   
+  
+  def _deduplicate_results(
+    self, 
+    results: list[SearchResult],
+  ) -> list[SearchResult]:
+    seen =set()
+    unique_results= []
+    
+    for result in results:
+      key= (
+        result.source_file,
+        result.start_line,
+        result.end_line,
+      )
+      
+      if key in seen: continue
+      
+      seen.add(key)
+      unique_results.append(result)
+    return unique_results
