@@ -29,6 +29,9 @@ class Settings(BaseSettings):
   
   CHROMA_PATH: str = "./data/chroma"
   COLLECTION_NAME: str = "codebase"
+  
+  GROQ_API_KEY: str
+  GROQ_MODEL: str = "openai/gpt-oss-20b"
 
 
   # To tell Pydantic where .env is
